@@ -17,6 +17,7 @@
 #     openenclave$ sudo docker build \
 #         --no-cache=true \
 #         --build-arg ubuntu_version=18.04 \
+#         --build-arg devkits_uri=https://oejenkins.blob.core.windows.net/oejenkins/OE-CI-devkits-d1634ce8.tar.gz \
 #         -t oetools-18.04:1.x \
 #         -f .jenkins/Dockerfile \
 #         .
@@ -56,11 +57,16 @@ ARG UNAME=jenkins
 ARG GNAME=jenkins
 ARG UID=1000
 ARG GID=1000
+ARG devkits_uri
 
 # Install essential packages
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get -y install make build-essential git jq vim curl wget netcat apt-transport-https unzip
+
+# Setup devkit
+RUN curl ${devkits_uri} | tar xvz --no-same-permissions --no-same-owner
+RUN echo ${devkits_uri##*/} > /devkits/TARBALL
 
 # Add Microsoft repo
 RUN echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ bionic main" | tee /etc/apt/sources.list.d/azure-cli.list
