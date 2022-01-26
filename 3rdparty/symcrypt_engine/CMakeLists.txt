@@ -1,6 +1,8 @@
 # Copyright (c) Open Enclave SDK contributors.
 # Licensed under the MIT License.
 
+check_submodule_not_empty(SymCrypt-OpenSSL)
+
 set(OPENSSL_DIR ${PROJECT_SOURCE_DIR}/3rdparty/openssl/openssl)
 set(SYMCRYPT_ENGINE_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/SymCrypt-OpenSSL/SymCryptEngine)
@@ -81,12 +83,10 @@ if (CLANG_INTRINSIC_HEADERS_DIR)
   if (WIN32)
     # On Windows, the path includes spaces that the current clangw script cannot handle. As a workaround,
     # we copy the directory to the CMAKE_CURRENT_BINARY_DIR/include
-    add_custom_target(
-      clang_intrinsic_headers_copy
+    add_custom_command(
+      TARGET oesymcryptengine
       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CLANG_INTRINSIC_HEADERS_DIR}
               ${CMAKE_CURRENT_BINARY_DIR}/include)
-
-    add_enclave_dependencies(oesymcryptengine clang_intrinsic_headers_copy)
 
     set(CLANG_INTRINSIC_HEADERS_DIR ${CMAKE_CURRENT_BINARY_DIR}/include)
   endif ()
